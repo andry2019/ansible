@@ -1,0 +1,31 @@
+---
+- name: Install and configure Fail2Ban on Ubuntu
+  hosts: all
+  become: true # Required to run tasks with sudo privileges
+  gather_facts: true
+
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600 # Update cache if older than 1 hour
+
+    - name: Install Fail2Ban package
+      ansible.builtin.apt:
+        name: fail2ban
+        state: present
+
+    - name: Enable and start Fail2Ban service
+      ansible.builtin.systemd:
+        name: fail2ban
+        enabled: true
+        state: started
+      # This handler will restart fail2ban if configuration changes are made
+      notify:
+        - Restart fail2ban
+  
+  handlers:
+    - name: Restart fail2ban
+      ansible.builtin.systemd:
+        name: fail2ban
+        state: restarted

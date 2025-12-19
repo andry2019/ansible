@@ -1,0 +1,8 @@
+- hosts: all
+  become: yes  
+  tasks:
+    - name: creation d'utilisateur
+      ansible.builtin.user:
+         name: kaloy
+         shell: /bin/bash
+         state: present
